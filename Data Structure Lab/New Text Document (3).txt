@@ -1,0 +1,73 @@
+//4 bit adder subtractor
+module Four_bit_adder_subtractor(s0,s1,s2,s3,cout,a0,b0,a1,b1,a2,b2,a3,b3,cin);
+
+input a0,a1,a2,a3,b0,b1,b2,b3,cin;
+output s0,s1,s2,s3,cout;
+
+wire mood;
+//assign mood = 0;
+assign cin = mood;
+
+wire b0_xor,b1_xor,b2_xor,b3_xor;
+
+assign b0_xor = b0^mood;
+assign b1_xor = b1^mood;
+assign b2_xor = b2^mood;
+assign b3_xor = b3^mood;
+
+wire cout0,cout1,cout2;
+
+FA fa0(s0,cout0,a0,b0_xor,cin);
+FA fa1(s1,cout1,a1,b1_xor,cout0);
+FA fa2(s2,cout2,a2,b2_xor,cout1);
+FA fa3(s3,cout,a3,b3_xor,cout2);
+
+endmodule
+//BCD to Excess 3
+module BCD_to_Excess_3(d0,d1,d2,d3,a0,a1,a2,a3);
+
+input d0,d1,d2,d3;
+output a0,a1,a2,a3;
+
+assign a0 = ~d0;
+
+wire d0not_and_d1not,d0_and_d1;
+and and_0(d0not_and_d1not,~d0,~d1);
+and and_1(d0_and_d1,d0,d1);
+
+or or_0(a1,d0not_and_d1not,d0_and_d1);
+
+wire d0_or_d1;
+or or_1(d0_or_d1,d0,d1);
+
+xor xor_0(a2,d2,d0_or_d1);
+
+wire d2_and__d0_or_d1;
+and and_2(d2_and_d0_or_d1,d2,d0_or_d1);
+or or_2(a3,d3,d2_and_d0_or_d1);
+
+
+
+endmodule
+//3 bit Synchronous up down counter
+module three_bit_sync_up_down_counter(Q,qbar,M,clk,clear);
+
+output [3:0]Q,qbar;
+input clk,clear,M;
+
+tff tff1(Q[0],qbar[0],1'b1,clk,clear);
+
+not nt1(m_not,M);
+and and1(m_not_qa,m_not,Q[0]);
+and and2(m_qa_not,M,qbar[0]);
+or or1(tb,m_not_qa,m_qa_not);
+
+tff tff2(Q[1],qbar[1],tb,clk,clear);
+
+and and3(m_not_qa_qb,m_not_qa,Q[1]);
+and and4(m_qa_not_qb_not,m_qa_not,qbar[1]);
+or or2(tc,m_not_qa_qb,m_qa_not_qb_not);
+
+tff tff3(Q[2],qbar[2],tc,clk,clear);
+
+endmodule
